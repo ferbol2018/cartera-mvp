@@ -1,16 +1,41 @@
-from fastapi import APIRouter
-from app.models.payment import PaymentCreate, PaymentRead
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.db import SessionLocal
+from app.models.payment import Payment
 
 router = APIRouter()
 
-fake_payments_db = []
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@router.post("/", response_model=PaymentRead)
-def create_payment(payment: PaymentCreate):
-    new_payment = {"id": len(fake_payments_db) + 1, **payment.dict()}
-    fake_payments_db.append(new_payment)
-    return new_payment
+@router.post("/")
+def create_payment(invoice_id: int, amount: int, db: Session = Depends(get_db)):
+    payment = Payment(invoice_id=invoice_id, amount=amount)
+    db.add(payment)
+    db.commit()
+    db.refresh(payment)
+    return payment
 
-@router.get("/", response_model=list[PaymentRead])
-def list_payments():
-    return fake_payments_db
+@router.get("/")
+def list_payments(db: Session = Depends(get_db)):
+    return db.query(Payment).all()
+
+@router.get("/{payment_id}")
+def get_payment(payment_id: int, db: Session = Depends(get_db)):
+    payment = db.query(Payment).filter(Payment.id == payment_id).first()
+    if not payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    return payment
+
+@router.delete("/{payment_id}")
+def delete_payment(payment_id: int, db: Session = Depends(get_db)):
+    payment = db.query(Payment).filter(Payment.id == payment_id).first()
+    if not payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    db.delete(payment)
+    db.commit()
+    return {"detail": "Payment deleted"}
