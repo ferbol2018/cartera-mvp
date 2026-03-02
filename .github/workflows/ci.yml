@@ -47,13 +47,20 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest pytest-cov
 
       - name: Run Alembic migrations
         run: |
           source venv/bin/activate
           alembic upgrade head
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
           source venv/bin/activate
-          pytest -v
+          pytest --cov=app --cov-report=xml --cov-report=term-missing -v
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
