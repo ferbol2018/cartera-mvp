@@ -1,10 +1,10 @@
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.database import Base, get_db
 from app import models
 from fastapi.testclient import TestClient
 from app.main import app
+from app.db import Base, get_db
 
 # Base de datos SQLite en memoria para pruebas
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
