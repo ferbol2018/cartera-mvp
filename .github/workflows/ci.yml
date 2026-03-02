@@ -31,6 +31,7 @@ jobs:
       DB_HOST: localhost
       DB_PORT: 5432
       DB_NAME: test_db
+      PYTHONPATH: "${{ github.workspace }}"
 
     steps:
       - name: Checkout repo
@@ -48,6 +49,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
+          pip install -e .
 
       - name: Run Alembic migrations
         run: |
