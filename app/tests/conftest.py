@@ -6,10 +6,12 @@ from app import models
 from fastapi.testclient import TestClient
 from app.main import app
 
+# Base de datos SQLite en memoria para pruebas
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Override de la dependencia get_db
 def override_get_db():
     db = TestingSessionLocal()
     try:
