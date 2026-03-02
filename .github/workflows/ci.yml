@@ -31,7 +31,7 @@ jobs:
       DB_HOST: localhost
       DB_PORT: 5432
       DB_NAME: test_db
-      PYTHONPATH: "${{ github.workspace }}"
+      PYTHONPATH: "${{ github.workspace }}/app"
 
     steps:
       - name: Checkout repo
