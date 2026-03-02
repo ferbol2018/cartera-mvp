@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env
+
+# Node (si usas frontend)
+node_modules/
+
+# Coverage / testing
+.coverage
+htmlcov/
+.pytest_cache/
